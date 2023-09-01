@@ -7,37 +7,20 @@
  *
  * Return: lowest common ancestor
  */
-binary_tree_t
-*binary_trees_ancestor(const binary_tree_t *first, const binary_tree_t *second)
+binary_tree_t *binary_trees_ancestor(const binary_tree_t *first,
+		const binary_tree_t *second)
 {
-	size_t lowest;
+	binary_tree_t *right, *left;
 
-	if (first && second)
-	{
-		if (first->parent == second)
-			return ((binary_tree_t *)second);
-		if (second->parent == first)
-			return ((binary_tree_t *)first);
-		lowest = binary_tree_depth(first);
-		return (binary_tree_depth(second) < lowest ? second->parent : first->parent);
-	}
-	return (NULL);
-}
+	if (!first || !second)
+		return (NULL);
+	if (first == second)
+		return ((binary_tree_t *)first);
 
-/**
- * binary_tree_depth - measures the depth of a binary tree node
- * @node: node to measure
- *
- * Return: node depth
- */
-size_t binary_tree_depth(const binary_tree_t *node)
-{
-	size_t depth = 0;
-
-	if (node)
-	{
-		for (depth = 0; node->parent; node = node->parent, depth++)
-		;
-	}
-	return (depth);
+	right = first->parent, left = second->parent;
+	if (first == left || !right || (!right->parent && left))
+		return (binary_trees_ancestor(first, left));
+	else if (right == second || !left || (!left->parent && right))
+		return (binary_trees_ancestor(right, second));
+	return (binary_trees_ancestor(right, left));
 }
